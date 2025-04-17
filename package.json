@@ -12,8 +12,12 @@
   "dependencies": {
     "@langchain/core": "^0.3.44",
     "@langchain/ollama": "^0.2.0",
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/showdown": "^2.0.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "showdown": "^2.1.0",
+    "tailwindcss": "^4.1.4",
     "zod": "^3.24.2"
   },
   "devDependencies": {

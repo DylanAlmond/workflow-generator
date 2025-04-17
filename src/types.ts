@@ -1,4 +1,4 @@
-export type StepType = 'info' | 'checkbox' | 'textbox' | 'image_upload' | 'video_upload';
+export type StepType = 'info' | 'select' | 'textbox' | 'image_upload' | 'video_upload';
 
 export type BaseStep = {
   type: StepType;
@@ -11,12 +11,13 @@ export type TextboxStep = BaseStep & { type: 'textbox' };
 export type ImageUploadStep = BaseStep & { type: 'image_upload' };
 export type VideoUploadStep = BaseStep & { type: 'video_upload' };
 
-export type CheckboxStep = BaseStep & {
-  type: 'checkbox';
+export type SelectStep = BaseStep & {
+  type: 'select';
+  selectMultiple: boolean;
   values: string[];
 };
 
-export type Step = InfoStep | TextboxStep | CheckboxStep | ImageUploadStep | VideoUploadStep;
+export type Step = InfoStep | TextboxStep | SelectStep | ImageUploadStep | VideoUploadStep;
 
 export type Workflow = {
   title: string;

@@ -1,20 +1,22 @@
 import { useCallback, useState } from 'react';
 import { ChatOllama } from '@langchain/ollama';
-import { WorkflowSchema, SystemPrompt, DefaultQuery, TESTWORKFLOW } from './constants';
+import { WorkflowSchema, SystemPrompt, Queries } from './constants';
 import { Workflow } from './types';
 import WorkflowComponent from './components/WorkflowComponent';
-import './App.css';
 
 const llm = new ChatOllama({
-  model: 'llama3.2',
+  model: 'granite3.3:8b',
   temperature: 0
 }).withStructuredOutput(WorkflowSchema);
 
 const App = () => {
-  const [query, setQuery] = useState<string>(DefaultQuery);
-  const [result, setResult] = useState<Workflow | null>(TESTWORKFLOW);
+  const [query, setQuery] = useState<string>(Queries.mot);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [result, setResult] = useState<Workflow | null>(null);
 
   const GenerateResult = useCallback(async () => {
+    setLoading(true);
+
     const formattedPrompt = await SystemPrompt.formatMessages({
       context: '',
       query
@@ -24,6 +26,7 @@ const App = () => {
 
     console.log(response);
 
+    setLoading(false);
     setResult(response);
   }, [query]);
 
@@ -31,7 +34,22 @@ const App = () => {
     <div>
       <h1>Procedure Generator</h1>
 
-      {result ? <WorkflowComponent workflow={result} /> : <p>No Workflow.</p>}
+      {result ? <WorkflowComponent workflow={result} /> : <p>No Procedure.</p>}
+
+      <label htmlFor=''>
+        <span>Template</span>
+        <select
+          onInput={(e) =>
+            setQuery(Queries[(e.target as HTMLSelectElement).value as keyof typeof Queries])
+          }
+        >
+          {Object.keys(Queries).map((v) => (
+            <option key={v} value={v}>
+              {v}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <textarea
         value={query}
@@ -40,10 +58,11 @@ const App = () => {
         cols={60}
       ></textarea>
 
-      <button onClick={GenerateResult}>Generate Procedure</button>
+      <button onClick={GenerateResult} disabled={loading}>
+        {loading ? 'Generating' : 'Generate Procedure'}
+      </button>
     </div>
   );
 };
 
 export default App;
-

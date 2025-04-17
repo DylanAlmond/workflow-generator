@@ -1,18 +1,25 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Step, Workflow } from '../types';
+import { Converter } from 'showdown';
 
 interface WorkflowComponentProps {
   workflow: Workflow;
 }
 
+const converter = new Converter();
+
 const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const activeStep = useMemo<Step>(() => workflow.steps[activeStepIndex], [activeStepIndex]);
+  const activeStep = useMemo<Step>(
+    () => workflow.steps[activeStepIndex],
+    [activeStepIndex, workflow.steps]
+  );
 
   useEffect(() => {
     setActiveStepIndex(0);
-  }, []);
+  }, [workflow]);
+
+  if (!activeStep) return null;
 
   return (
     <div style={{ padding: '2rem', border: '2px solid grey' }}>
@@ -22,13 +29,21 @@ const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
         <h3>
           {activeStep.title} - {activeStep.type}
         </h3>
-        <p>{activeStep.content}</p>
 
-        {activeStep.type === 'checkbox' ? (
+        <div
+          style={{ textAlign: 'left' }}
+          dangerouslySetInnerHTML={{ __html: converter.makeHtml(activeStep.content) }}
+        />
+
+        {activeStep.type === 'select' ? (
           activeStep.values.map((v) => (
             <label key={v}>
               {v}
-              <input type='checkbox' name='' id='' />
+              <input
+                type={activeStep.selectMultiple ? 'checkbox' : 'radio'}
+                name={activeStep.title}
+                id=''
+              />
             </label>
           ))
         ) : activeStep.type === 'textbox' ? (

@@ -1,116 +1,175 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { z } from 'zod';
-import { Workflow } from './types';
 
 export const SystemPrompt = ChatPromptTemplate.fromMessages([
   [
     'system',
-    `You are a structured workflow generation assistant. 
-    Your task is to create clear, complete, and logically ordered workflows in response to user queries.
-    Rules: 
-      - Each workflow must be broken into discrete steps, each with a type, title, and descriptive content.
-      - Any step which does not need user input must be a "info" step type.
-      - Any step which requires a user to "note", "report", "record", etc. any information must be a "textbox" step type.
-      - Any step which requires a user to "take" or "record" any media must be either a "image_upload" or "video_upload" step type.
-      - Any step which requires a user to "select", "choose", or "confirm" 1 or more conditions must be a "checkbox" step type.
-      - Checkbox steps must have a valid "values" array with at least 1 item, all other step types must have an empty "values" array.
-      - Do not repeat checkbox "values" in a steps content.
-    `
+    `You are a smart assistant that generates step-by-step workflows to guide users through tasks or procedures.
+
+Your output should include:
+
+A clear and relevant title
+
+An ordered array of steps
+
+Each step must have a specific purpose and use one of the following types:
+
+"info": to explain or instruct
+
+"select": to confirm that the user has checked, chosen, or verified something
+
+"textbox": to collect relevant input or a measurement from the user
+
+"image_upload" or "video_upload": only if visual confirmation is needed (e.g., inspection photos)
+
+Only request input (textbox, select, upload) when it is necessary for safety, accuracy, or decision-making. 
+
+Do not ask for personal information like usernames, passwords, or product keys under any circumstances.
+
+Ensure that a "select" input always has at least 2 values to select.
+
+Focus on clarity, logic, and practicality. The steps should form a complete, easy-to-follow guide.`
   ],
   ['human', 'Context:\n{context}\n\nQuery: {query}']
 ]);
 
-export const DefaultQuery = `Generate a comprehensive and practical workflow for conducting a chemical health and safety inspection in a laboratory or industrial setting.
+export const WorkflowSchema = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  title: 'Workflow',
+  description: 'Schema for defining a workflow consisting of various step types.',
+  type: 'object',
+  required: ['title', 'steps'],
+  properties: {
+    title: {
+      type: 'string',
+      description: 'The title of the workflow.'
+    },
+    steps: {
+      type: 'array',
+      description: 'A list of steps that make up the workflow.',
+      items: {
+        oneOf: [
+          {
+            type: 'object',
+            required: ['type', 'title', 'content'],
+            properties: {
+              type: {
+                const: 'info',
+                description: 'Defines this step as an informational text block.'
+              },
+              title: { type: 'string', description: 'The title of the step.' },
+              content: {
+                type: 'string',
+                description: 'The body content of the step.'
+              }
+            }
+          },
+          {
+            type: 'object',
+            required: ['type', 'title', 'content'],
+            properties: {
+              type: { const: 'textbox', description: 'Defines this step as a user input textbox.' },
+              title: { type: 'string', description: 'The title of the step.' },
+              content: {
+                type: 'string',
+                description: 'The body content of the step.'
+              }
+            }
+          },
+          {
+            type: 'object',
+            required: ['type', 'title', 'content', 'values', 'selectMultiple'],
+            properties: {
+              type: {
+                const: 'select',
+                description: 'Defines this step as a checkbox selection input.'
+              },
+              title: { type: 'string', description: 'The title of the step.' },
+              content: {
+                type: 'string',
+                description: 'The body content of the step.'
+              },
+              selectMultiple: {
+                type: 'boolean',
+                description: 'Determines whether users can select more than one option.'
+              },
+              values: {
+                type: 'array',
+                description: 'An array of checkbox values for the user to select.',
+                items: {
+                  type: 'string',
+                  description: 'An individual option for the checkbox input.'
+                }
+              }
+            }
+          },
+          {
+            type: 'object',
+            required: ['type', 'title', 'content'],
+            properties: {
+              type: {
+                const: 'image_upload',
+                description: 'Defines this step as an image upload input.'
+              },
+              title: { type: 'string', description: 'The title of the step.' },
+              content: {
+                type: 'string',
+                description: 'The body content of the step.'
+              }
+            }
+          },
+          {
+            type: 'object',
+            required: ['type', 'title', 'content'],
+            properties: {
+              type: {
+                const: 'video_upload',
+                description: 'Defines this step as a video upload input.'
+              },
+              title: { type: 'string', description: 'The title of the step.' },
+              content: {
+                type: 'string',
+                description: 'The body content of the step.'
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+};
+
+export const Queries = {
+  chemical: `Generate a comprehensive and practical workflow for conducting a chemical health and safety inspection in a laboratory or industrial setting.
 
 Structure the workflow clearly using numbered steps. Make it suitable for use by safety officers or EHS (Environmental Health & Safety) personnel. Avoid vague language—focus on clarity and actionable details.
-Include a summary at the beginning of the workflow summarising the procedure.
-`;
+Include a summary at the beginning of the workflow summarising the procedure.`,
+  mot: `Create a detailed and comprehensive MOT inspection checklist in the UK that includes all required areas of inspection. The checklist should be organized into these logical categories:
 
-// Schema for Step
-export const StepSchema = z.object({
-  type: z.enum(['info', 'textbox', 'checkbox', 'image_upload', 'video_upload']),
-  title: z.string(),
-  content: z.string(),
-  values: z.array(z.string()).optional()
-});
+- Vehicle Identification & General Condition
+- Lights & Electrical Equipment
+- Steering & Suspension
+- Brakes
+- Tyres & Wheels
+- Seatbelts & Restraints
+- Body, Structure & General Items
+- Exhaust, Emissions & Fuel System
+- Drivers’ View of the Road (Mirrors, Wipers, Windscreen, etc.)
+- Horn, Registration Plates, and VIN
 
-// Workflow schema
-export const WorkflowSchema = z.object({
-  title: z.string(),
-  steps: z.array(StepSchema)
-});
+Ensure that all checks have a "Pass" and "Fail" option.
 
-export const TESTWORKFLOW: Workflow = {
-  title: 'Chemical Health and Safety Inspection Workflow',
-  steps: [
-    {
-      type: 'info',
-      title: 'Pre-Inspection Preparation',
-      content:
-        "Before starting the inspection, review the laboratory or industrial setting's chemical inventory, safety data sheets (SDS), and relevant regulations. Ensure all necessary personal protective equipment (PPE) is available and easily accessible."
-    },
-    {
-      type: 'checkbox',
-      title: 'Identify High-Risk Areas',
-      content:
-        'Determine which areas of the laboratory or industrial setting pose the greatest risk to personnel, such as areas with high concentrations of hazardous chemicals or equipment that requires special handling procedures.',
-      values: ['Chemical storage areas', 'Equipment maintenance areas', 'Waste disposal areas']
-    },
-    {
-      type: 'info',
-      title: 'Conduct Visual Inspection',
-      content:
-        'Perform a visual inspection of the laboratory or industrial setting to identify any potential hazards, such as spills, leaks, or equipment malfunctions.'
-    },
-    {
-      type: 'textbox',
-      title: 'Record Observations',
-      content:
-        'Document any observations or concerns during the visual inspection, including photographs or videos if necessary.'
-    },
-    {
-      type: 'checkbox',
-      title: 'Verify Chemical Storage and Handling Procedures',
-      content:
-        'Check that chemical storage and handling procedures are being followed, including proper labeling, segregation, and disposal of hazardous waste.',
-      values: ['Chemical storage areas', 'Equipment maintenance areas']
-    },
-    {
-      type: 'info',
-      title: 'Inspect Equipment and Machinery',
-      content:
-        'Verify that equipment and machinery are in good working condition, properly maintained, and meet regulatory requirements.'
-    },
-    {
-      type: 'checkbox',
-      title: 'Check for Proper Ventilation and Exhaust Systems',
-      content:
-        'Ensure that ventilation and exhaust systems are functioning properly to prevent the accumulation of hazardous fumes or gases.',
-      values: ['Chemical storage areas', 'Equipment maintenance areas']
-    },
-    {
-      type: 'info',
-      title: 'Review Safety Data Sheets (SDS)',
-      content: 'Verify that SDSs for all chemicals in use are up-to-date and readily available.'
-    },
-    {
-      type: 'checkbox',
-      title: 'Confirm Training and Competency of Personnel',
-      content:
-        'Ensure that personnel have received proper training and are competent to handle hazardous materials and equipment.',
-      values: ['Chemical storage areas', 'Equipment maintenance areas']
-    },
-    {
-      type: 'info',
-      title: 'Document Inspection Findings',
-      content:
-        'Compile a comprehensive report of the inspection findings, including any recommendations for improvement or corrective actions.'
-    },
-    {
-      type: 'image_upload',
-      title: 'Attach Supporting Documents (e.g., photographs, videos, SDSs)',
-      content:
-        'Upload supporting documents to facilitate review and reference during future inspections.'
-    }
-  ]
+In the case that a check requires the user to measure or read something, create a follow-up step that asks for the measurement/reading to be entered by the user.
+
+Include a notes slide at the end of the inspection for the user to input any further details.
+
+Include specific items to check under each category, mention any pass/fail criteria where applicable, and format it for easy use by an inspector or technician. Use clear, professional language. This should be compliant with current UK MOT standards.`,
+  windows: `Create me a detailed Windows 10 installation guide that goes step-by-step through the process for installing Windows 10. Ensure this can be used by technical support staff.
+
+The guide must include:
+
+- Downloading and using the Windows Media Creation Tool to create a bootable installer USB.
+- Plugging in and booting from the installer USB.
+- Navigating through the installer on the USB.
+- Navigating through the first time setup process.
+- Any post install instructions.`
 };
