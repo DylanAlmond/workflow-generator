@@ -1,135 +1,127 @@
-import { Workflow } from './types';
+import { Workflow } from "./types";
 
 export const example: Workflow = {
-  title: 'UK MOT Inspection Checklist',
+  title: "Windows 10 Installation Guide for Technical Support Staff",
   steps: [
     {
-      type: 'textbox',
-      title: 'Vehicle Identification & General Condition',
+      type: "info",
+      title: "Step 1: Preparation",
       content:
-        "Check the vehicle's identification number (VIN) is correct and legible.\n\nPass/Fail Criteria: Correct VIN, incorrect VIN"
+        "Ensure you have a USB drive with at least 8GB of storage. This will be used to create a bootable installer for Windows 10.",
     },
     {
-      type: 'checkbox',
+      type: "textbox",
+      title: "Step 2: Download the Windows Media Creation Tool",
+      content:
+        "Visit the official Microsoft website [https://www.microsoft.com/en-us/software-download/windows10](https://www.microsoft.com/en-us/software-download/windows10) and download the 'Windows Media Creation Tool'.",
+    },
+    {
+      type: "info",
+      title: "Step 3: Run the Windows Media Creation Tool",
+      content:
+        "Locate the downloaded file, right-click on it, and select 'Run as administrator'. Follow the prompts to accept the license terms.",
+    },
+    {
+      type: "textbox",
       title:
-        'Check for any signs of damage or wear on the bodywork.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
+        "Step 4: Select 'Create installation media (USB flash drive, DVD, or ISO file) for another PC'",
       content:
-        'Check for any scratches, dents, or rust. Check for any signs of repainting or touch-ups.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Choose this option if you're creating the installer on a different computer than the one you'll be installing Windows on.",
     },
     {
-      type: 'checkbox',
-      title:
-        'Check the condition of the tyres and wheels.\n\nPass/Fail Criteria: Tyres are in good condition, Tyres are worn out',
+      type: "textbox",
+      title: "Step 5: Choose Language, Edition, and Architecture",
       content:
-        'Check tread depth (minimum 1.6mm).\n\nPass/Fail Criteria: Tread depth is above 1.6mm, tread depth is below 1.6mm',
-      multipleChoice: false,
-      values: ['Yes', 'No']
+        "Select your preferred language, Windows 10 edition (usually 'Windows 10'), and the system architecture (32-bit or 64-bit). Click 'Next'.",
     },
     {
-      type: 'checkbox',
-      title:
-        'Check the condition of the wheels.\n\nPass/Fail Criteria: Wheels are in good condition, Wheels are damaged',
+      type: "textbox",
+      title: "Step 6: Select USB Flash Drive",
       content:
-        'Check for any signs of damage or wear.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Choose your USB drive from the list and click 'Next' to begin creating the bootable installer.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's suspension and steering components.\n\nPass/Fail Criteria: Components are in good condition, Components are damaged",
+      type: "info",
+      title: "Step 7: Wait for the Process to Complete",
       content:
-        'Check for any signs of wear or damage on the shock absorbers, struts, and springs.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "The tool will download Windows 10 and package it into a bootable USB drive. This may take some time depending on your internet speed.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's brakes.\n\nPass/Fail Criteria: Brakes are in good condition, Brakes are faulty",
+      type: "info",
+      title: "Step 8: Plug in the Installer USB",
       content:
-        'Check for any signs of wear or damage on the brake pads and discs.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Insert the created bootable USB into the target computer where you want to install Windows 10.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's seatbelts and restraints.\n\nPass/Fail Criteria: Seatbelts are in good condition, Seatbelts are faulty",
+      type: "info",
+      title: "Step 9: Boot from the Installer USB",
       content:
-        'Check for any signs of wear or damage on the seatbelts and restraints.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Restart the target computer and enter the boot menu (usually by pressing F2, F10, F12, or DEL during startup). Select the USB drive as the boot device.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's body, structure, and general items.\n\nPass/Fail Criteria: Items are in good condition, Items are damaged",
+      type: "info",
+      title: "Step 10: Start Installation",
       content:
-        'Check for any signs of wear or damage on the door handles, mirrors, and other general items.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Once the computer boots from the USB, you'll see the 'Windows Setup' screen. Click 'Next'.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's exhaust system.\n\nPass/Fail Criteria: System is in good condition, System is faulty",
+      type: "select",
+      title: "Step 11: Choose Installer Language and Other Preferences",
       content:
-        'Check for any signs of leaks or damage on the exhaust system.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Select your preferred language, time and currency format, and keyboard or input method, then click 'Next'.",
+      selectMultiple: false,
+      values: ["English", "French", "German", "Spanish", "Japanese"],
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's emissions and fuel system.\n\nPass/Fail Criteria: System is in good condition, System is faulty",
+      type: "info",
+      title: "Step 12: Enter Product Key (if required)",
       content:
-        'Check for any signs of leaks or damage on the fuel system.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "If prompted, enter your Windows 10 product key. You can also skip this step and add it later.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's drivers' view of the road (mirrors, wipers, windscreen, etc.).\n\nPass/Fail Criteria: View is clear, View is obstructed",
-      content:
-        'Check for any signs of damage or wear on the mirrors and wipers.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+      type: "info",
+      title: "Step 13: Choose 'Install Now'",
+      content: "Click on this option to proceed with the installation.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's horn.\n\nPass/Fail Criteria: Horn is in good working order, Horn is faulty",
-      content:
-        'Check for any signs of damage or wear on the horn.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+      type: "select",
+      title: "Step 14: Accept License Terms",
+      content: "Check the box to accept the license terms and click 'Next'.",
+      selectMultiple: false,
+      values: [
+        "I accept the license terms",
+        "I do not accept the license terms",
+      ],
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's registration plates.\n\nPass/Fail Criteria: Plates are in good condition, Plates are damaged",
+      type: "info",
+      title: "Step 15: Choose 'Custom: Install Windows only (advanced)'",
       content:
-        'Check for any signs of damage or wear on the registration plates.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "This option allows for a clean install, formatting the entire drive. For other options like upgrading or keeping files, choose accordingly.",
     },
     {
-      type: 'checkbox',
-      title:
-        "Check the condition of the vehicle's VIN (Vehicle Identification Number).\n\nPass/Fail Criteria: VIN is correct and legible, VIN is incorrect or illegible",
+      type: "textbox",
+      title: "Step 16: Select Where to Install Windows",
       content:
-        'Check for any signs of damage or wear on the VIN.\n\nPass/Fail Criteria: No significant damage or wear, significant damage or wear',
-      multipleChoice: false,
-      values: ['No', 'Yes']
+        "Choose the partition where you want to install Windows 10. If you want a clean install, select the existing partitions and click 'Drive options (advanced)' > 'Delete' to remove all data.",
     },
     {
-      type: 'textbox',
-      title: 'Notes',
-      content: "Any additional notes or comments regarding the vehicle's condition."
-    }
-  ]
+      type: "info",
+      title: "Step 17: Begin Installation",
+      content:
+        "Click 'Next' to start the installation process. The computer will restart several times during this phase.",
+    },
+    {
+      type: "info",
+      title: "Step 18: Set Up Windows",
+      content:
+        "After the installation is complete, you'll be guided through the initial setup process including connecting to Wi-Fi, setting up a Microsoft account (or signing in with existing credentials), and customizing settings.",
+    },
+    {
+      type: "info",
+      title: "Post Installation Instructions",
+      content:
+        "Ensure all Windows updates are installed. Install necessary drivers for hardware. Set up any required software or applications.",
+    },
+  ],
 };

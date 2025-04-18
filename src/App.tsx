@@ -1,25 +1,45 @@
-import { useCallback, useState } from 'react';
-import { ChatOllama } from '@langchain/ollama';
-import { WorkflowSchema, SystemPrompt, Queries } from './constants';
-import { Workflow } from './types';
-import WorkflowComponent from './components/WorkflowComponent';
+import { useCallback, useState } from "react";
+import { ChatOllama } from "@langchain/ollama";
+import { WorkflowSchema, SystemPrompt, Queries } from "./constants";
+import { Workflow } from "./types";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
+import { Label } from "./components/ui/label";
+import { Textarea } from "./components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import WorkflowComponent from "./components/WorkflowComponent";
+import { example } from "./example";
 
 const llm = new ChatOllama({
-  model: 'granite3.3:8b',
-  temperature: 0
+  model: "granite3.3:8b",
+  temperature: 0,
 }).withStructuredOutput(WorkflowSchema);
 
 const App = () => {
-  const [query, setQuery] = useState<string>(Queries.mot);
+  const [activeTab, setActiveTab] = useState<string>("create");
+  const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<Workflow | null>(null);
+  const [result, setResult] = useState<Workflow | null>(example);
 
   const GenerateResult = useCallback(async () => {
     setLoading(true);
 
     const formattedPrompt = await SystemPrompt.formatMessages({
-      context: '',
-      query
+      context: "",
+      query,
     });
 
     const response = (await llm.invoke(formattedPrompt)) as Workflow;
@@ -27,41 +47,85 @@ const App = () => {
     console.log(response);
 
     setLoading(false);
+    setActiveTab("preview");
     setResult(response);
   }, [query]);
 
   return (
-    <div>
-      <h1>Procedure Generator</h1>
+    <Tabs
+      value={activeTab}
+      className="bg-background h-dvh w-dvw items-center overflow-hidden p-4"
+      onValueChange={(v) => setActiveTab(v)}
+    >
+      <TabsList className="absolute top-12">
+        <TabsTrigger value="create">Create</TabsTrigger>
+        <TabsTrigger disabled={!result} value="preview">
+          Preview
+        </TabsTrigger>
+      </TabsList>
 
-      {result ? <WorkflowComponent workflow={result} /> : <p>No Procedure.</p>}
+      <TabsContent value="create" className="flex w-full">
+        <Card className="m-auto flex h-[480px] md:h-1/2 w-full flex-col md:w-[480px]">
+          <CardHeader>
+            <CardTitle>Create Workflow</CardTitle>
+          </CardHeader>
 
-      <label htmlFor=''>
-        <span>Template</span>
-        <select
-          onInput={(e) =>
-            setQuery(Queries[(e.target as HTMLSelectElement).value as keyof typeof Queries])
-          }
-        >
-          {Object.keys(Queries).map((v) => (
-            <option key={v} value={v}>
-              {v}
-            </option>
-          ))}
-        </select>
-      </label>
+          <CardContent className="flex flex-1 flex-col gap-4 overflow-y-auto">
+            {/* <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="title">Title</Label>
+              <Input id="title" placeholder="Title of your procedure" />
+            </div> */}
 
-      <textarea
-        value={query}
-        onInput={(e) => setQuery((e.target as HTMLTextAreaElement).value)}
-        rows={20}
-        cols={60}
-      ></textarea>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="template">Prompt Template (Optional)</Label>
+              <Select
+                onValueChange={(e: keyof typeof Queries) =>
+                  setQuery(Queries[e])
+                }
+              >
+                <SelectTrigger id="template">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {Object.keys(Queries).map((v) => (
+                    <SelectItem key={v} value={v}>
+                      {v}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-      <button onClick={GenerateResult} disabled={loading}>
-        {loading ? 'Generating' : 'Generate Procedure'}
-      </button>
-    </div>
+            <div className="flex flex-1 flex-col space-y-1.5">
+              <Label htmlFor="prompt">Prompt</Label>
+              <Textarea
+                id="prompt"
+                placeholder="Prompt for your procedure"
+                className="mb-2 flex-1 resize-none"
+                value={query}
+                onInput={(e) =>
+                  setQuery((e.target as HTMLTextAreaElement).value)
+                }
+              />
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex justify-between">
+            <Button
+              onClick={GenerateResult}
+              disabled={loading}
+              className="primary"
+            >
+              {loading ? "Generating..." : "Generate"}
+            </Button>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="preview" className="flex h-full pt-28">
+        {result ? <WorkflowComponent workflow={result} /> : null}
+      </TabsContent>
+    </Tabs>
   );
 };
 

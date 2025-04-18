@@ -1,8 +1,8 @@
-import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 
 export const SystemPrompt = ChatPromptTemplate.fromMessages([
   [
-    'system',
+    "system",
     `You are a smart assistant that generates step-by-step workflows to guide users through tasks or procedures.
 
 Your output should include:
@@ -27,123 +27,130 @@ Do not ask for personal information like usernames, passwords, or product keys u
 
 Ensure that a "select" input always has at least 2 values to select.
 
-Focus on clarity, logic, and practicality. The steps should form a complete, easy-to-follow guide.`
+Focus on clarity, logic, and practicality. The steps should form a complete, easy-to-follow guide.`,
   ],
-  ['human', 'Context:\n{context}\n\nQuery: {query}']
+  ["human", "Context:\n{context}\n\nQuery: {query}"],
 ]);
 
 export const WorkflowSchema = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'Workflow',
-  description: 'Schema for defining a workflow consisting of various step types.',
-  type: 'object',
-  required: ['title', 'steps'],
+  $schema: "http://json-schema.org/draft-07/schema#",
+  title: "Workflow",
+  description:
+    "Schema for defining a workflow consisting of various step types.",
+  type: "object",
+  required: ["title", "steps"],
   properties: {
     title: {
-      type: 'string',
-      description: 'The title of the workflow.'
+      type: "string",
+      description: "The title of the workflow.",
     },
     steps: {
-      type: 'array',
-      description: 'A list of steps that make up the workflow.',
+      type: "array",
+      description: "A list of steps that make up the workflow.",
       items: {
         oneOf: [
           {
-            type: 'object',
-            required: ['type', 'title', 'content'],
+            type: "object",
+            required: ["type", "title", "content"],
             properties: {
               type: {
-                const: 'info',
-                description: 'Defines this step as an informational text block.'
+                const: "info",
+                description:
+                  "Defines this step as an informational text block.",
               },
-              title: { type: 'string', description: 'The title of the step.' },
+              title: { type: "string", description: "The title of the step." },
               content: {
-                type: 'string',
-                description: 'The body content of the step.'
-              }
-            }
+                type: "string",
+                description: "The body content of the step.",
+              },
+            },
           },
           {
-            type: 'object',
-            required: ['type', 'title', 'content'],
-            properties: {
-              type: { const: 'textbox', description: 'Defines this step as a user input textbox.' },
-              title: { type: 'string', description: 'The title of the step.' },
-              content: {
-                type: 'string',
-                description: 'The body content of the step.'
-              }
-            }
-          },
-          {
-            type: 'object',
-            required: ['type', 'title', 'content', 'values', 'selectMultiple'],
+            type: "object",
+            required: ["type", "title", "content"],
             properties: {
               type: {
-                const: 'select',
-                description: 'Defines this step as a checkbox selection input.'
+                const: "textbox",
+                description: "Defines this step as a user input textbox.",
               },
-              title: { type: 'string', description: 'The title of the step.' },
+              title: { type: "string", description: "The title of the step." },
               content: {
-                type: 'string',
-                description: 'The body content of the step.'
+                type: "string",
+                description: "The body content of the step.",
+              },
+            },
+          },
+          {
+            type: "object",
+            required: ["type", "title", "content", "values", "selectMultiple"],
+            properties: {
+              type: {
+                const: "select",
+                description: "Defines this step as a checkbox selection input.",
+              },
+              title: { type: "string", description: "The title of the step." },
+              content: {
+                type: "string",
+                description: "The body content of the step.",
               },
               selectMultiple: {
-                type: 'boolean',
-                description: 'Determines whether users can select more than one option.'
+                type: "boolean",
+                description:
+                  "Determines whether users can select more than one option.",
               },
               values: {
-                type: 'array',
-                description: 'An array of checkbox values for the user to select.',
+                type: "array",
+                description:
+                  "An array of checkbox values for the user to select.",
                 items: {
-                  type: 'string',
-                  description: 'An individual option for the checkbox input.'
-                }
-              }
-            }
+                  type: "string",
+                  description: "An individual option for the checkbox input.",
+                },
+              },
+            },
           },
           {
-            type: 'object',
-            required: ['type', 'title', 'content'],
+            type: "object",
+            required: ["type", "title", "content"],
             properties: {
               type: {
-                const: 'image_upload',
-                description: 'Defines this step as an image upload input.'
+                const: "image_upload",
+                description: "Defines this step as an image upload input.",
               },
-              title: { type: 'string', description: 'The title of the step.' },
+              title: { type: "string", description: "The title of the step." },
               content: {
-                type: 'string',
-                description: 'The body content of the step.'
-              }
-            }
+                type: "string",
+                description: "The body content of the step.",
+              },
+            },
           },
           {
-            type: 'object',
-            required: ['type', 'title', 'content'],
+            type: "object",
+            required: ["type", "title", "content"],
             properties: {
               type: {
-                const: 'video_upload',
-                description: 'Defines this step as a video upload input.'
+                const: "video_upload",
+                description: "Defines this step as a video upload input.",
               },
-              title: { type: 'string', description: 'The title of the step.' },
+              title: { type: "string", description: "The title of the step." },
               content: {
-                type: 'string',
-                description: 'The body content of the step.'
-              }
-            }
-          }
-        ]
-      }
-    }
-  }
+                type: "string",
+                description: "The body content of the step.",
+              },
+            },
+          },
+        ],
+      },
+    },
+  },
 };
 
 export const Queries = {
-  chemical: `Generate a comprehensive and practical workflow for conducting a chemical health and safety inspection in a laboratory or industrial setting.
+  "Chemical Health and Safety Inspection": `Generate a comprehensive and practical workflow for conducting a chemical health and safety inspection in a laboratory or industrial setting.
 
 Structure the workflow clearly using numbered steps. Make it suitable for use by safety officers or EHS (Environmental Health & Safety) personnel. Avoid vague language—focus on clarity and actionable details.
 Include a summary at the beginning of the workflow summarising the procedure.`,
-  mot: `Create a detailed and comprehensive MOT inspection checklist in the UK that includes all required areas of inspection. The checklist should be organized into these logical categories:
+  "MOT Inspection": `Create a detailed and comprehensive MOT inspection checklist in the UK that includes all required areas of inspection. The checklist should be organized into these logical categories:
 
 - Vehicle Identification & General Condition
 - Lights & Electrical Equipment
@@ -163,7 +170,7 @@ In the case that a check requires the user to measure or read something, create 
 Include a notes slide at the end of the inspection for the user to input any further details.
 
 Include specific items to check under each category, mention any pass/fail criteria where applicable, and format it for easy use by an inspector or technician. Use clear, professional language. This should be compliant with current UK MOT standards.`,
-  windows: `Create me a detailed Windows 10 installation guide that goes step-by-step through the process for installing Windows 10. Ensure this can be used by technical support staff.
+  "Windows Installation Guide": `Create me a detailed Windows 10 installation guide that goes step-by-step through the process for installing Windows 10. Ensure this can be used by technical support staff.
 
 The guide must include:
 
@@ -171,5 +178,5 @@ The guide must include:
 - Plugging in and booting from the installer USB.
 - Navigating through the installer on the USB.
 - Navigating through the first time setup process.
-- Any post install instructions.`
+- Any post install instructions.`,
 };
