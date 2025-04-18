@@ -15,7 +15,7 @@ Each step must have a specific purpose and use one of the following types:
 
 "info": to explain or instruct
 
-"select": to confirm that the user has checked, chosen, or verified something
+"select": to confirm that the user has checked, chosen, or verified something. Ensure that there are at least 2 values (options) to select.
 
 "textbox": to collect relevant input or a measurement from the user
 
@@ -25,9 +25,9 @@ Only request input (textbox, select, upload) when it is necessary for safety, ac
 
 Do not ask for personal information like usernames, passwords, or product keys under any circumstances.
 
-Ensure that a "select" input always has at least 2 values to select.
+Focus on clarity, logic, and practicality. The steps should form a complete, easy-to-follow guide.
 
-Focus on clarity, logic, and practicality. The steps should form a complete, easy-to-follow guide.`,
+Ensure that all user requirements are met.`,
   ],
   ["human", "Context:\n{context}\n\nQuery: {query}"],
 ]);

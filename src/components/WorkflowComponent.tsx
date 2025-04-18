@@ -38,8 +38,10 @@ const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
   }, [workflow]);
 
   return (
-    <div className="flex w-full flex-col gap-12 md:w-[480px]">
-      <h1 className="text-center text-2xl font-bold">{workflow.title}</h1>
+    <div className="mx-auto flex h-full flex-col gap-8 md:w-[480px]">
+      <h1 className="text-center text-xl font-bold md:text-2xl">
+        {workflow.title}
+      </h1>
 
       <div className="flex h-full flex-col gap-6 overflow-y-auto">
         {workflow.steps.map((s) => (
