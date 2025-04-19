@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button } from "./components/ui/button";
+import { Button, buttonVariants } from "./components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { ModeToggle } from "./components/ModeToggle";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,6 @@ import {
 import { useWorkflow } from "./components/WorkflowProvider";
 import WorkflowPreview from "./components/WorkflowPreview";
 import WorkflowGenerator from "./components/WorkflowGenerator";
-import AboutToggle from "./components/AboutToggle";
 
 const App = () => {
   const { workflow, importJSON, exportJSON } = useWorkflow();
@@ -21,7 +20,13 @@ const App = () => {
   return (
     <>
       <div className="absolute top-8 left-8 flex gap-2">
-        <AboutToggle />
+        <a
+          className={buttonVariants({ variant: "outline", size: "icon" })}
+          href="https://github.com/DylanAlmond/workflow-generator"
+        >
+          <Info className="absolute h-[1.2rem] w-[1.2rem] transition-all" />
+          <span className="sr-only">About</span>
+        </a>
       </div>
 
       <div className="absolute top-8 right-8 flex gap-2">
