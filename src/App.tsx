@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "./components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { ModeToggle } from "./components/ModeToggle";
@@ -14,8 +14,22 @@ import WorkflowPreview from "./components/WorkflowPreview";
 import WorkflowGenerator from "./components/WorkflowGenerator";
 
 const App = () => {
-  const { workflow, importJSON, exportJSON } = useWorkflow();
+  const { error, workflow, importJSON, exportJSON } = useWorkflow();
   const [activeTab, setActiveTab] = useState<string>("create");
+
+  // Switch to "create" tab to display error
+  useEffect(() => {
+    if (error) {
+      setActiveTab("create");
+    }
+  }, [error]);
+
+  // Switch to "preview" tab on loading a workflow
+  useEffect(() => {
+    if (workflow) {
+      setActiveTab("preview");
+    }
+  }, [workflow]);
 
   return (
     <>
