@@ -4,6 +4,8 @@
 
 A React application that explores using LLMs to generate interactive workflows and forms from natural language descriptions. It leverages IBM's [`granite3.3:8b`](https://www.ibm.com/new/announcements/ibm-granite-3-3-speech-recognition-refined-reasoning-rag-loras) model via [Ollama](https://ollama.com) + [LangChain](https://www.langchain.com/) to turn user inputs into structured, customizable form-based procedures.
 
+![Workflow Generator Screenshot](./screenshots/preview.png)
+
 ## Table of Contents
 
 - [Workflow Generator (Prototype)](#workflow-generator-prototype)
