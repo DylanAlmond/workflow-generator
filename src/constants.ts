@@ -15,7 +15,7 @@ Each step must have a specific purpose and use one of the following types:
 
 "info": to explain or instruct
 
-"select": to confirm that the user has checked, chosen, or verified something. Ensure that there are at least 2 values (options) to select.
+"select": to confirm that the user has checked, chosen, or verified something. Ensure that there are at least 2 options for the user to choose from.
 
 "textbox": to collect relevant input or a measurement from the user
 

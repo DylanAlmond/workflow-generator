@@ -21,21 +21,88 @@ import { Label } from "./components/ui/label";
 import { Textarea } from "./components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import WorkflowComponent from "./components/WorkflowComponent";
-import { example } from "./example";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { ModeToggle } from "./components/ModeToggle";
+import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./components/ui/dropdown-menu";
+import Ajv from "ajv";
 
 const llm = new ChatOllama({
   model: "granite3.3:8b",
   temperature: 0,
 }).withStructuredOutput(WorkflowSchema);
 
+const ajv = new Ajv();
+const validate = ajv.compile(WorkflowSchema);
+
 const App = () => {
   const [activeTab, setActiveTab] = useState<string>("create");
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<Workflow | null>(example);
+  const [result, setResult] = useState<Workflow | null>(null);
+
+  const importJSON = useCallback(() => {
+    setError(null);
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+
+    input.onchange = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target?.result as string);
+          const valid = validate(json);
+
+          if (!valid)
+            throw new Error("The provided JSON is not a valid Workflow");
+
+          setResult(json as Workflow);
+          setActiveTab("preview");
+        } catch (e) {
+          if (e instanceof Error) {
+            setError(e.message);
+          } else {
+            setError("An unknown error occurred");
+          }
+
+          setActiveTab("create");
+        }
+      };
+
+      reader.readAsText(file);
+    };
+
+    input.click();
+  }, []);
+
+  const exportToJSON = useCallback(() => {
+    if (!result) return;
+
+    const json = JSON.stringify(result, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const link = document.createElement("a");
+    const href = URL.createObjectURL(blob);
+
+    link.href = href;
+    link.download = result.title;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  }, [result]);
 
   const GenerateResult = useCallback(async () => {
     setLoading(true);
@@ -50,14 +117,16 @@ const App = () => {
       const response = (await llm.invoke(formattedPrompt)) as Workflow;
       console.log(response);
 
-      setActiveTab("preview");
       setResult(response);
+      setActiveTab("preview");
     } catch (e: unknown) {
       if (e instanceof Error) {
         setError(e.message);
       } else {
-        console.log("An unknown error occurred");
+        setError("An unknown error occurred");
       }
+
+      setActiveTab("create");
     }
 
     setLoading(false);
@@ -65,7 +134,33 @@ const App = () => {
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="absolute top-8 right-8">
+      <div className="absolute top-8 right-8 flex gap-3">
+        <div className="hidden gap-3 sm:flex">
+          <Button variant="outline" onClick={importJSON}>
+            Import
+          </Button>
+          <Button disabled={!result} onClick={exportToJSON}>
+            Export
+          </Button>
+        </div>
+
+        <div className="block sm:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <ChevronDown className="absolute h-[1.2rem] w-[1.2rem] transition-all" />
+                <span className="sr-only">Options</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={importJSON}>Import</DropdownMenuItem>
+              <DropdownMenuItem disabled={!result} onClick={exportToJSON}>
+                Export
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         <ModeToggle />
       </div>
 
@@ -93,7 +188,7 @@ const App = () => {
 
             <CardContent className="flex flex-1 flex-col gap-4 overflow-y-auto">
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="template">Prompt Template (Optional)</Label>
+                <Label htmlFor="template">Prompt Preset (Optional)</Label>
                 <Select
                   onValueChange={(e: keyof typeof Queries) =>
                     setQuery(Queries[e])

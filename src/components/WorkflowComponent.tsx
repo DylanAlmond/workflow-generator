@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo } from "react";
 import { Workflow } from "../types";
 import { Converter } from "showdown";
 import {
@@ -13,7 +13,6 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Button } from "./ui/button";
 
 interface WorkflowComponentProps {
   workflow: Workflow;
@@ -22,21 +21,6 @@ interface WorkflowComponentProps {
 const converter = new Converter();
 
 const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
-  const exportToJSON = useCallback(() => {
-    const json = JSON.stringify(workflow, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const link = document.createElement("a");
-    const href = URL.createObjectURL(blob);
-
-    link.href = href;
-    link.download = workflow.title;
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
-  }, [workflow]);
-
   return (
     <div className="mx-auto flex h-full flex-col gap-8 md:w-[480px]">
       <h1 className="text-center text-xl font-bold md:text-2xl">
@@ -102,8 +86,6 @@ const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
           </Card>
         ))}
       </div>
-
-      <Button onClick={exportToJSON}>Save Workflow</Button>
     </div>
   );
 };
