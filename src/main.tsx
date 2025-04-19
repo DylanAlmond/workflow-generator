@@ -1,9 +1,15 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
+import App from "./App.tsx";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import WorkflowProvider from "./components/WorkflowProvider.tsx";
+import { ThemeProvider } from "./components/ThemeProvider.tsx";
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
-  </StrictMode>
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <WorkflowProvider>
+        <App />
+      </WorkflowProvider>
+    </ThemeProvider>
+  </StrictMode>,
 );

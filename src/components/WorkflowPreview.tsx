@@ -1,6 +1,4 @@
 import { memo } from "react";
-import { Workflow } from "../types";
-import { Converter } from "showdown";
 import {
   Card,
   CardHeader,
@@ -13,14 +11,13 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { useWorkflow } from "./WorkflowProvider";
 
-interface WorkflowComponentProps {
-  workflow: Workflow;
-}
+const WorkflowPreview = () => {
+  const { workflow } = useWorkflow();
 
-const converter = new Converter();
+  if (!workflow) return null;
 
-const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
   return (
     <div className="mx-auto flex h-full flex-col gap-8 md:w-[480px]">
       <h1 className="text-center text-xl font-bold md:text-2xl">
@@ -35,11 +32,7 @@ const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
             </CardHeader>
 
             <CardContent className="flex flex-1 flex-col gap-4">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: converter.makeHtml(s.content),
-                }}
-              />
+              <div>{s.content}</div>
 
               {s.type === "select" ? (
                 s.selectMultiple ? (
@@ -90,4 +83,4 @@ const WorkflowComponent = ({ workflow }: WorkflowComponentProps) => {
   );
 };
 
-export default memo(WorkflowComponent);
+export default memo(WorkflowPreview);
